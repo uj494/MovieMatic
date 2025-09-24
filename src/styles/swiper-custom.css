@@ -1,0 +1,77 @@
+/* Custom Swiper Pagination Styles */
+.action-swiper .swiper-pagination,
+.adventure-swiper .swiper-pagination {
+  position: relative !important;
+  margin-top: 2rem !important;
+  margin-bottom: 0 !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.action-swiper .swiper-pagination-bullet,
+.adventure-swiper .swiper-pagination-bullet {
+  width: 12px !important;
+  height: 12px !important;
+  background: #d1d5db !important;
+  opacity: 1 !important;
+  margin: 0 6px !important;
+  transition: all 0.3s ease !important;
+  border-radius: 50% !important;
+}
+
+.action-swiper .swiper-pagination-bullet-active,
+.adventure-swiper .swiper-pagination-bullet-active {
+  background: #3b82f6 !important;
+  transform: scale(1.2) !important;
+}
+
+/* Dark mode support */
+.dark .action-swiper .swiper-pagination-bullet,
+.dark .adventure-swiper .swiper-pagination-bullet {
+  background: #4b5563 !important;
+}
+
+.dark .action-swiper .swiper-pagination-bullet-active,
+.dark .adventure-swiper .swiper-pagination-bullet-active {
+  background: #60a5fa !important;
+}
+
+/* Dynamic bullets styling */
+.action-swiper .swiper-pagination-bullet-dynamic,
+.adventure-swiper .swiper-pagination-bullet-dynamic {
+  transform: scale(0.8) !important;
+  opacity: 0.6 !important;
+}
+
+.action-swiper .swiper-pagination-bullet-dynamic-active,
+.adventure-swiper .swiper-pagination-bullet-dynamic-active {
+  transform: scale(1.2) !important;
+  opacity: 1 !important;
+}
+
+/* Ensure proper spacing for the swiper container */
+.action-swiper,
+.adventure-swiper {
+  padding-bottom: 3rem !important;
+  overflow: visible !important;
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 768px) {
+  .action-swiper .swiper-pagination,
+  .adventure-swiper .swiper-pagination {
+    margin-top: 1.5rem !important;
+  }
+  
+  .action-swiper .swiper-pagination-bullet,
+  .adventure-swiper .swiper-pagination-bullet {
+    width: 10px !important;
+    height: 10px !important;
+    margin: 0 4px !important;
+  }
+}
