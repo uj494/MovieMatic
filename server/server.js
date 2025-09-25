@@ -137,6 +137,7 @@ app.get('/api/movies', async (req, res) => {
 app.get('/api/movies/genre/:genre', async (req, res) => {
   try {
     const movies = await Movie.find({ genre: req.params.genre }).populate('streamingPlatforms.service');
+    console.log(`✅ Found ${movies.length} movies for genre: ${req.params.genre}`);
     res.json(movies);
   } catch (error) {
     console.error('❌ Error fetching movies by genre:', error);
@@ -191,7 +192,7 @@ app.get('/api/movies/search', async (req, res) => {
     
     // Genre filter
     if (genre) {
-      query.genre = { $in: [genre] };
+      query.genre = genre;
     }
     
     // Year filter
