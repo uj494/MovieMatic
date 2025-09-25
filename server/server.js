@@ -138,26 +138,10 @@ app.get('/api/movies/genre/:genre', async (req, res) => {
   try {
     const movies = await Movie.find({ genre: req.params.genre }).populate('streamingPlatforms.service');
     console.log(`✅ Found ${movies.length} movies for genre: ${req.params.genre}`);
-    console.log('🎬 Movies found:', movies.map(m => ({ title: m.title, genre: m.genre })));
     res.json(movies);
   } catch (error) {
     console.error('❌ Error fetching movies by genre:', error);
     res.status(500).json({ message: 'Error fetching movies by genre', error: error.message });
-  }
-});
-
-// Debug endpoint to check all movies and their genres
-app.get('/api/movies/debug/genres', async (req, res) => {
-  try {
-    const movies = await Movie.find({}).select('title genre');
-    console.log('🎬 All movies and their genres:');
-    movies.forEach(movie => {
-      console.log(`- ${movie.title}: [${movie.genre.join(', ')}]`);
-    });
-    res.json(movies);
-  } catch (error) {
-    console.error('❌ Error fetching movies for debug:', error);
-    res.status(500).json({ message: 'Error fetching movies for debug', error: error.message });
   }
 });
 
@@ -202,14 +186,14 @@ app.get('/api/movies/search', async (req, res) => {
         { title: { $regex: q, $options: 'i' } },
         { director: { $regex: q, $options: 'i' } },
         { description: { $regex: q, $options: 'i' } },
-        { cast: { $regex: q, $options: 'i' } }
+        { cast: { $regex: q, $options: 'i' } },
+        { genre: { $regex: q, $options: 'i' } }
       ];
     }
     
     // Genre filter
     if (genre) {
-      query.genre = { $in: [genre] };
-      console.log('🎭 Genre search query:', query.genre);
+      query.genre = genre;
     }
     
     // Year filter
@@ -222,10 +206,8 @@ app.get('/api/movies/search', async (req, res) => {
       query.rating = { $gte: parseFloat(rating) };
     }
     
-    console.log('🔍 Final query:', JSON.stringify(query, null, 2));
     const movies = await Movie.find(query).populate('streamingPlatforms.service').sort({ createdAt: -1 });
     console.log(`✅ Found ${movies.length} movies matching search criteria`);
-    console.log('🎬 Movies found:', movies.map(m => ({ title: m.title, genre: m.genre })));
     res.json(movies);
   } catch (error) {
     console.error('❌ Error searching movies:', error);
