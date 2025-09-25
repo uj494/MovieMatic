@@ -61,7 +61,7 @@ export const WatchlistProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch('${API_BASE_URL}/api/watchlist/add', {
+      const response = await fetch(`${API_BASE_URL}/api/watchlist/add`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -235,7 +235,7 @@ export const WatchlistProvider = ({ children }) => {
     if (!isAuthenticated) return;
 
     try {
-      const response = await fetch('${API_BASE_URL}/api/watchlist/stats', {
+      const response = await fetch(`${API_BASE_URL}/api/watchlist/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
