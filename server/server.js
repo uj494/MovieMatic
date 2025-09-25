@@ -28,8 +28,9 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://your-frontend-domain.vercel.app', // Replace with your actual frontend URL
-    'https://your-frontend-domain.netlify.app'  // Replace with your actual frontend URL
+    'https://project-xumyt.vercel.app', // Your actual Vercel URL
+    'https://*.vercel.app', // Allow all Vercel domains
+    'https://*.netlify.app'  // Allow all Netlify domains
   ],
   credentials: true
 }));
