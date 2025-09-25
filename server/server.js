@@ -87,7 +87,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/moviemati
     console.log('🔌 Connection state:', mongoose.connection.readyState);
   })
   .catch((error) => {
-    console.error('❌ MongoDB connection error:', error);
+    console.error('❌ MongoDB connection error:', process.env.MONGODB_URI+" "+error);
   });
 
 // Test endpoint
