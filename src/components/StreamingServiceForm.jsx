@@ -87,7 +87,7 @@ const StreamingServiceForm = ({ service, isOpen, onClose, onSubmit }) => {
 
       const url = service 
         ? `${API_BASE_URL}/api/streaming-services/${service._id}`
-        : '${API_BASE_URL}/api/streaming-services';
+        : `${API_BASE_URL}/api/streaming-services`;
       
       const method = service ? 'PUT' : 'POST';
 
