@@ -102,7 +102,7 @@ const SearchModal = ({ isOpen, onClose, initialQuery = '' }) => {
       className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center p-4 z-50"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[85vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between mb-4">
@@ -141,7 +141,13 @@ const SearchModal = ({ isOpen, onClose, initialQuery = '' }) => {
         </div>
 
         {/* Search Results */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div 
+          className="flex-1 overflow-y-auto p-6"
+          style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#d1d5db #f3f4f6'
+          }}
+        >
           {searchQuery.trim() && (
             <div className="mb-4">
               <p className="text-sm text-gray-500 dark:text-gray-400">
