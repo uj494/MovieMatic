@@ -54,7 +54,7 @@ const BrowseMovies = () => {
   const fetchMovies = async () => {
     try {
       setLoading(true);
-      const response = await fetch('${API_BASE_URL}/api/movies');
+      const response = await fetch(`${API_BASE_URL}/api/movies`);
       if (response.ok) {
         const moviesData = await response.json();
         setMovies(moviesData);
