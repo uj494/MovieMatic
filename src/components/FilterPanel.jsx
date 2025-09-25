@@ -1,13 +1,14 @@
 import API_BASE_URL from '../config/api.js';
 import { useState, useEffect, useRef } from 'react';
 
-const FilterPanel = ({ onFiltersChange, isOpen, onToggle }) => {
+const FilterPanel = ({ onFiltersChange, isOpen, onToggle, currentFilters = {} }) => {
   const [filters, setFilters] = useState({
     search: '',
     genre: '',
     year: '',
     rating: '',
-    sortBy: 'newest'
+    sortBy: 'newest',
+    ...currentFilters
   });
 
   const [availableGenres, setAvailableGenres] = useState([]);
@@ -47,21 +48,29 @@ const FilterPanel = ({ onFiltersChange, isOpen, onToggle }) => {
     };
   }, []);
 
+  // Update local filters when currentFilters prop changes
+  useEffect(() => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      ...currentFilters
+    }));
+  }, [currentFilters]);
+
   const handleFilterChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     
-    // For search input, use debounced search
+    // For search input, use debounced search like header search
     if (key === 'search') {
       // Clear existing timeout
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
       
-      // Set new timeout for debounced search
+      // Set new timeout for debounced search (300ms like header search)
       searchTimeoutRef.current = setTimeout(() => {
         onFiltersChange(newFilters);
-      }, 500); // 500ms delay
+      }, 300); // 300ms delay like header search
     } else {
       // For other filters, apply immediately
       onFiltersChange(newFilters);

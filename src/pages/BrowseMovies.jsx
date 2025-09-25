@@ -78,7 +78,11 @@ const BrowseMovies = () => {
 
   const fetchFilteredMovies = async (searchFilters) => {
     try {
-      setLoading(true);
+      // Only show loading for non-search filters to avoid flickering during typing
+      if (!searchFilters.search) {
+        setLoading(true);
+      }
+      
       const queryParams = new URLSearchParams();
       
       if (searchFilters.search) queryParams.append('q', searchFilters.search);
@@ -97,7 +101,9 @@ const BrowseMovies = () => {
       console.error('Error fetching movies:', error);
       setError('Failed to load movies');
     } finally {
-      setLoading(false);
+      if (!searchFilters.search) {
+        setLoading(false);
+      }
     }
   };
 
@@ -250,6 +256,7 @@ const BrowseMovies = () => {
               onFiltersChange={handleFiltersChange}
               isOpen={isFilterOpen}
               onToggle={() => setIsFilterOpen(!isFilterOpen)}
+              currentFilters={filters}
             />
           </div>
 
