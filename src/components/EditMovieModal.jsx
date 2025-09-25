@@ -41,7 +41,7 @@ const EditMovieModal = ({ movie, isOpen, onClose, onUpdate }) => {
   useEffect(() => {
     const fetchStreamingServices = async () => {
       try {
-        const response = await fetch('${API_BASE_URL}/api/streaming-services');
+        const response = await fetch(`${API_BASE_URL}/api/streaming-services`);
         if (response.ok) {
           const services = await response.json();
           setStreamingServices(services);

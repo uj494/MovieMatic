@@ -22,7 +22,7 @@ const AdminHomepageSections = () => {
 
   const fetchSections = async () => {
     try {
-      const response = await fetch('${API_BASE_URL}/api/homepage-sections/admin');
+      const response = await fetch(`${API_BASE_URL}/api/homepage-sections/admin`);
       const data = await response.json();
       setSections(data);
     } catch (error) {
@@ -34,7 +34,7 @@ const AdminHomepageSections = () => {
 
   const fetchMovies = async () => {
     try {
-      const response = await fetch('${API_BASE_URL}/api/homepage-sections/movies/available');
+      const response = await fetch(`${API_BASE_URL}/api/homepage-sections/movies/available`);
       const data = await response.json();
       setMovies(data);
     } catch (error) {
@@ -53,7 +53,7 @@ const AdminHomepageSections = () => {
     try {
       const url = editingSection 
         ? `${API_BASE_URL}/api/homepage-sections/${editingSection._id}`
-        : '${API_BASE_URL}/api/homepage-sections';
+        : `${API_BASE_URL}/api/homepage-sections`;
       
       const method = editingSection ? 'PUT' : 'POST';
       

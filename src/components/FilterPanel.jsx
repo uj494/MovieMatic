@@ -17,7 +17,7 @@ const FilterPanel = ({ onFiltersChange, isOpen, onToggle }) => {
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const response = await fetch('${API_BASE_URL}/api/movies');
+        const response = await fetch(`${API_BASE_URL}/api/movies`);
         if (response.ok) {
           const movies = await response.json();
           

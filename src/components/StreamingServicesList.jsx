@@ -16,7 +16,7 @@ const StreamingServicesList = () => {
   const fetchStreamingServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch('${API_BASE_URL}/api/streaming-services/admin');
+      const response = await fetch(`${API_BASE_URL}/api/streaming-services/admin`);
       if (response.ok) {
         const services = await response.json();
         setStreamingServices(services);
