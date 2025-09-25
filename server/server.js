@@ -28,11 +28,14 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://project-xumyt.vercel.app', // Your actual Vercel URL
-    'https://*.vercel.app', // Allow all Vercel domains
-    'https://*.netlify.app'  // Allow all Netlify domains
+    'https://project-xumyt.vercel.app',
+    'https://project-xumyt-7264k3844-ujjwal-sonis-projects-a76560b0.vercel.app',
+    'https://*.vercel.app',
+    'https://*.netlify.app'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
