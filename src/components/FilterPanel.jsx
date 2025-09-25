@@ -1,5 +1,5 @@
 import API_BASE_URL from '../config/api.js';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const FilterPanel = ({ onFiltersChange, isOpen, onToggle }) => {
   const [filters, setFilters] = useState({
@@ -12,6 +12,7 @@ const FilterPanel = ({ onFiltersChange, isOpen, onToggle }) => {
 
   const [availableGenres, setAvailableGenres] = useState([]);
   const [availableYears, setAvailableYears] = useState([]);
+  const searchTimeoutRef = useRef(null);
 
   // Fetch available genres and years
   useEffect(() => {
@@ -37,10 +38,34 @@ const FilterPanel = ({ onFiltersChange, isOpen, onToggle }) => {
     fetchFilterOptions();
   }, []);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleFilterChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
-    onFiltersChange(newFilters);
+    
+    // For search input, use debounced search
+    if (key === 'search') {
+      // Clear existing timeout
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      
+      // Set new timeout for debounced search
+      searchTimeoutRef.current = setTimeout(() => {
+        onFiltersChange(newFilters);
+      }, 500); // 500ms delay
+    } else {
+      // For other filters, apply immediately
+      onFiltersChange(newFilters);
+    }
   };
 
   const clearFilters = () => {
