@@ -64,7 +64,7 @@ const Header = () => {
             to="/browse"
             className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
-            Browse Movies
+            Browse
           </Link>
           {isAuthenticated && (
             <Link
@@ -78,7 +78,7 @@ const Header = () => {
             to="/admin"
             className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
-            Admin Panel
+            Admin
           </Link>
           
           {/* Authentication Links */}
@@ -149,18 +149,18 @@ const Header = () => {
           </Link>
 
           {/* Navigation buttons - right aligned */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3">
             <Link
               to="/browse"
               className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
-              Browse Movies
+              Browse
             </Link>
             <Link
               to="/admin"
               className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
-              Admin Panel
+              Admin
             </Link>
             
             {/* User Profile Dropdown */}
