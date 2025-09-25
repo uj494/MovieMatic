@@ -120,22 +120,16 @@ const Header = () => {
                 </div>
               )}
             </div>
-          ) : (
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/login"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/signup"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Sign Up
-              </Link>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center">
+                <Link
+                  to="/login"
+                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  Sign In
+                </Link>
+              </div>
+            )}
         </nav>
       </div>
 
@@ -209,18 +203,12 @@ const Header = () => {
                 )}
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center">
                 <Link
                   to="/login"
                   className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                   Sign In
-                </Link>
-                <Link
-                  to="/signup"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
-                >
-                  Sign Up
                 </Link>
               </div>
             )}
