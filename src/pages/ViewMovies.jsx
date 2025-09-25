@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { useState, useEffect } from 'react';
 import EditMovieModal from '../components/EditMovieModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
@@ -15,7 +16,7 @@ const ViewMovies = () => {
 
   const fetchMovies = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/movies');
+      const response = await fetch('${API_BASE_URL}/api/movies');
       if (response.ok) {
         const data = await response.json();
         setMovies(data);
@@ -109,7 +110,7 @@ const ViewMovies = () => {
             {movie.portraitImage && (
               <div className="aspect-[2/3] overflow-hidden">
                 <img
-                  src={`http://localhost:3001${movie.portraitImage}`}
+                  src={`${API_BASE_URL}${movie.portraitImage}`}
                   alt={movie.title}
                   className="w-full h-full object-cover"
                   onError={(e) => {

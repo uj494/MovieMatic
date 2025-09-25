@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -50,7 +51,7 @@ const SearchModal = ({ isOpen, onClose, initialQuery = '' }) => {
 
     setIsSearching(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/movies/search?q=${encodeURIComponent(query)}`);
+      const response = await fetch(`${API_BASE_URL}/api/movies/search?q=${encodeURIComponent(query)}`);
       if (response.ok) {
         const results = await response.json();
         setSearchResults(results);
@@ -161,7 +162,7 @@ const SearchModal = ({ isOpen, onClose, initialQuery = '' }) => {
                   {movie.portraitImage && (
                     <div className="aspect-[2/3] overflow-hidden">
                       <img
-                        src={`http://localhost:3001${movie.portraitImage}`}
+                        src={`${API_BASE_URL}${movie.portraitImage}`}
                         alt={movie.title}
                         className="w-full h-full object-cover"
                       />

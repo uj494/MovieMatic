@@ -1,9 +1,10 @@
+import API_BASE_URL from '../config/api.js';
 import { useState } from 'react';
 
 const DeleteConfirmationModal = ({ movie, isOpen, onClose, onDelete }) => {
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/movies/${movie._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/movies/${movie._id}`, {
         method: 'DELETE',
       });
 

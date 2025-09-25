@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -21,7 +22,7 @@ const AdminHomepageSections = () => {
 
   const fetchSections = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/homepage-sections/admin');
+      const response = await fetch('${API_BASE_URL}/api/homepage-sections/admin');
       const data = await response.json();
       setSections(data);
     } catch (error) {
@@ -33,7 +34,7 @@ const AdminHomepageSections = () => {
 
   const fetchMovies = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/homepage-sections/movies/available');
+      const response = await fetch('${API_BASE_URL}/api/homepage-sections/movies/available');
       const data = await response.json();
       setMovies(data);
     } catch (error) {
@@ -51,8 +52,8 @@ const AdminHomepageSections = () => {
 
     try {
       const url = editingSection 
-        ? `http://localhost:3001/api/homepage-sections/${editingSection._id}`
-        : 'http://localhost:3001/api/homepage-sections';
+        ? `${API_BASE_URL}/api/homepage-sections/${editingSection._id}`
+        : '${API_BASE_URL}/api/homepage-sections';
       
       const method = editingSection ? 'PUT' : 'POST';
       
@@ -103,7 +104,7 @@ const AdminHomepageSections = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/homepage-sections/${sectionId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/homepage-sections/${sectionId}`, {
         method: 'DELETE',
       });
 
@@ -292,7 +293,7 @@ const AdminHomepageSections = () => {
                         <div className="flex items-center space-x-3">
                           {movie.portraitImage && (
                             <img
-                              src={`http://localhost:3001${movie.portraitImage}`}
+                              src={`${API_BASE_URL}${movie.portraitImage}`}
                               alt={movie.title}
                               className="w-12 h-16 object-cover rounded"
                             />

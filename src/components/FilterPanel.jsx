@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { useState, useEffect } from 'react';
 
 const FilterPanel = ({ onFiltersChange, isOpen, onToggle }) => {
@@ -16,7 +17,7 @@ const FilterPanel = ({ onFiltersChange, isOpen, onToggle }) => {
   useEffect(() => {
     const fetchFilterOptions = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/movies');
+        const response = await fetch('${API_BASE_URL}/api/movies');
         if (response.ok) {
           const movies = await response.json();
           

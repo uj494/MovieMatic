@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { useState, useEffect } from 'react';
 
 const StreamingServiceForm = ({ service, isOpen, onClose, onSubmit }) => {
@@ -19,7 +20,7 @@ const StreamingServiceForm = ({ service, isOpen, onClose, onSubmit }) => {
         isActive: service.isActive !== undefined ? service.isActive : true
       });
       if (service.icon) {
-        setIconPreview(`http://localhost:3001${service.icon}`);
+        setIconPreview(`${API_BASE_URL}${service.icon}`);
       }
     } else {
       setFormData({
@@ -85,8 +86,8 @@ const StreamingServiceForm = ({ service, isOpen, onClose, onSubmit }) => {
       }
 
       const url = service 
-        ? `http://localhost:3001/api/streaming-services/${service._id}`
-        : 'http://localhost:3001/api/streaming-services';
+        ? `${API_BASE_URL}/api/streaming-services/${service._id}`
+        : '${API_BASE_URL}/api/streaming-services';
       
       const method = service ? 'PUT' : 'POST';
 

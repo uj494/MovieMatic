@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { useState, useEffect } from 'react';
 
 const EditMovieModal = ({ movie, isOpen, onClose, onUpdate }) => {
@@ -40,7 +41,7 @@ const EditMovieModal = ({ movie, isOpen, onClose, onUpdate }) => {
   useEffect(() => {
     const fetchStreamingServices = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/streaming-services');
+        const response = await fetch('${API_BASE_URL}/api/streaming-services');
         if (response.ok) {
           const services = await response.json();
           setStreamingServices(services);
@@ -82,10 +83,10 @@ const EditMovieModal = ({ movie, isOpen, onClose, onUpdate }) => {
       
       // Set existing image previews
       if (movie.portraitImage) {
-        setPortraitPreview(`http://localhost:3001${movie.portraitImage}`);
+        setPortraitPreview(`${API_BASE_URL}${movie.portraitImage}`);
       }
       if (movie.landscapeImage) {
-        setLandscapePreview(`http://localhost:3001${movie.landscapeImage}`);
+        setLandscapePreview(`${API_BASE_URL}${movie.landscapeImage}`);
       }
       
       // Reset new image uploads
@@ -212,7 +213,7 @@ const EditMovieModal = ({ movie, isOpen, onClose, onUpdate }) => {
         formDataToSend.append('landscapeImage', landscapeImage);
       }
 
-      const response = await fetch(`http://localhost:3001/api/movies/${movie._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/movies/${movie._id}`, {
         method: 'PUT',
         body: formDataToSend,
       });

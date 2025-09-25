@@ -7,6 +7,7 @@ import { useReview } from '../context/ReviewContext';
 import ReviewForm from '../components/ReviewForm';
 import ReviewList from '../components/ReviewList';
 import StarRating from '../components/StarRating';
+import API_BASE_URL from '../config/api.js';
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -83,7 +84,7 @@ const MovieDetails = () => {
   const fetchMovieDetails = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3001/api/movies/${id}`);
+      const response = await fetch(`${API_BASE_URL}/api/movies/${id}`);
       if (response.ok) {
         const movieData = await response.json();
         setMovie(movieData);
@@ -197,7 +198,7 @@ const MovieDetails = () => {
         {movie.landscapeImage && (
           <div className="w-full h-96 lg:h-[500px] relative overflow-hidden">
             <img
-              src={`http://localhost:3001${movie.landscapeImage}`}
+              src={`${API_BASE_URL}${movie.landscapeImage}`}
               alt={movie.title}
               className="w-full h-full object-cover"
             />
@@ -324,7 +325,7 @@ const MovieDetails = () => {
                       <div className="flex items-center space-x-3">
                         {platform.service?.icon ? (
                           <img
-                            src={`http://localhost:3001${platform.service.icon}`}
+                            src={`${API_BASE_URL}${platform.service.icon}`}
                             alt={platform.service.name}
                             className="w-10 h-10 rounded-lg object-cover group-hover:opacity-80 transition-opacity"
                           />

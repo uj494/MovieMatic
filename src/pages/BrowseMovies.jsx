@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Header from '../components/Header';
@@ -35,7 +36,7 @@ const BrowseMovies = () => {
   const fetchMoviesByGenre = async (genre) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3001/api/movies/genre/${genre}`);
+      const response = await fetch(`${API_BASE_URL}/api/movies/genre/${genre}`);
       if (response.ok) {
         const moviesData = await response.json();
         setMovies(moviesData);
@@ -53,7 +54,7 @@ const BrowseMovies = () => {
   const fetchMovies = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/api/movies');
+      const response = await fetch('${API_BASE_URL}/api/movies');
       if (response.ok) {
         const moviesData = await response.json();
         setMovies(moviesData);
@@ -78,7 +79,7 @@ const BrowseMovies = () => {
       if (searchFilters.year) queryParams.append('year', searchFilters.year);
       if (searchFilters.rating) queryParams.append('rating', searchFilters.rating);
 
-      const response = await fetch(`http://localhost:3001/api/movies/search?${queryParams}`);
+      const response = await fetch(`${API_BASE_URL}/api/movies/search?${queryParams}`);
       if (response.ok) {
         const moviesData = await response.json();
         setMovies(moviesData);

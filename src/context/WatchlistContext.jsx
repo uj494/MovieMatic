@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 
@@ -31,7 +32,7 @@ export const WatchlistProvider = ({ children }) => {
       queryParams.append('page', page);
       queryParams.append('limit', limit);
 
-      const response = await fetch(`http://localhost:3001/api/watchlist?${queryParams}`, {
+      const response = await fetch(`${API_BASE_URL}/api/watchlist?${queryParams}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -60,7 +61,7 @@ export const WatchlistProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/watchlist/add', {
+      const response = await fetch('${API_BASE_URL}/api/watchlist/add', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -123,7 +124,7 @@ export const WatchlistProvider = ({ children }) => {
       const itemToRemove = watchlist.find(item => item.movie._id === movieId);
       const statusToRemove = itemToRemove?.status;
 
-      const response = await fetch(`http://localhost:3001/api/watchlist/remove/${movieId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/watchlist/remove/${movieId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -166,7 +167,7 @@ export const WatchlistProvider = ({ children }) => {
       const currentItem = watchlist.find(item => item.movie._id === movieId);
       const oldStatus = currentItem?.status;
 
-      const response = await fetch(`http://localhost:3001/api/watchlist/update/${movieId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/watchlist/update/${movieId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -210,7 +211,7 @@ export const WatchlistProvider = ({ children }) => {
     if (!isAuthenticated) return { inWatchlist: false, watchlistItem: null };
 
     try {
-      const response = await fetch(`http://localhost:3001/api/watchlist/check/${movieId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/watchlist/check/${movieId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -234,7 +235,7 @@ export const WatchlistProvider = ({ children }) => {
     if (!isAuthenticated) return;
 
     try {
-      const response = await fetch('http://localhost:3001/api/watchlist/stats', {
+      const response = await fetch('${API_BASE_URL}/api/watchlist/stats', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

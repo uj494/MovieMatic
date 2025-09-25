@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useWatchlist } from '../context/WatchlistContext';
@@ -167,7 +168,7 @@ const Watchlist = () => {
                 {item.movie.portraitImage && (
                   <div className="aspect-[2/3] overflow-hidden relative">
                     <img
-                      src={`http://localhost:3001${item.movie.portraitImage}`}
+                      src={`${API_BASE_URL}${item.movie.portraitImage}`}
                       alt={item.movie.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

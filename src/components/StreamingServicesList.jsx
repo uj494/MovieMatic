@@ -1,3 +1,4 @@
+import API_BASE_URL from '../config/api.js';
 import { useState, useEffect } from 'react';
 import StreamingServiceForm from './StreamingServiceForm';
 
@@ -15,7 +16,7 @@ const StreamingServicesList = () => {
   const fetchStreamingServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/api/streaming-services/admin');
+      const response = await fetch('${API_BASE_URL}/api/streaming-services/admin');
       if (response.ok) {
         const services = await response.json();
         setStreamingServices(services);
@@ -43,7 +44,7 @@ const StreamingServicesList = () => {
   const handleDeleteService = async (serviceId) => {
     if (window.confirm('Are you sure you want to delete this streaming service?')) {
       try {
-        const response = await fetch(`http://localhost:3001/api/streaming-services/${serviceId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/streaming-services/${serviceId}`, {
           method: 'DELETE'
         });
         
@@ -62,7 +63,7 @@ const StreamingServicesList = () => {
   const handleToggleActive = async (serviceId, currentStatus) => {
     try {
       const service = streamingServices.find(s => s._id === serviceId);
-      const response = await fetch(`http://localhost:3001/api/streaming-services/${serviceId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/streaming-services/${serviceId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -151,7 +152,7 @@ const StreamingServicesList = () => {
                     <div className="flex items-center">
                       {service.icon ? (
                         <img
-                          src={`http://localhost:3001${service.icon}`}
+                          src={`${API_BASE_URL}${service.icon}`}
                           alt={service.name}
                           className="h-8 w-8 rounded-lg mr-3"
                         />

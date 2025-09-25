@@ -7,6 +7,7 @@ import { Pagination } from "swiper/modules";
 import Header from '../components/Header';
 import MovieCard from '../components/MovieCard';
 import '../styles/swiper-custom.css';
+import API_BASE_URL from '../config/api.js';
 
 const UserHome = () => {
   const [featuredMovie, setFeaturedMovie] = useState(null);
@@ -23,7 +24,7 @@ const UserHome = () => {
 
   const fetchFeaturedMovie = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/movies/week/featured');
+      const response = await fetch(`${API_BASE_URL}/api/movies/week/featured`);
       if (response.ok) {
         const movie = await response.json();
         setFeaturedMovie(movie);
@@ -34,7 +35,7 @@ const UserHome = () => {
   };
   const PopularGenres = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/movies/genres/popular');
+      const response = await fetch(`${API_BASE_URL}/api/movies/genres/popular`);
       const genres = await response.json();
       setPopularGenres(genres);
     } catch (error) {
@@ -44,7 +45,7 @@ const UserHome = () => {
 
   const fetchHomepageSections = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/homepage-sections');
+      const response = await fetch(`${API_BASE_URL}/api/homepage-sections`);
       const sections = await response.json();
       setHomepageSections(sections);
     } catch (error) {
@@ -114,7 +115,7 @@ const UserHome = () => {
                 {featuredMovie.landscapeImage && (
                   <div className="relative">
                     <img
-                      src={`http://localhost:3001${featuredMovie.landscapeImage}`}
+                      src={`${API_BASE_URL}${featuredMovie.landscapeImage}`}
                       alt={featuredMovie.title}
                       className="w-full h-80 lg:h-96 object-cover rounded-lg shadow-2xl"
                     />
