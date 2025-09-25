@@ -30,7 +30,14 @@ const BrowseMovies = () => {
 
   // Apply filters whenever movies or filters change
   useEffect(() => {
-    applyFilters();
+    // Only apply client-side filters if no server-side search was performed
+    const hasServerFilters = filters.search || filters.genre || filters.year || filters.rating;
+    if (!hasServerFilters) {
+      applyFilters();
+    } else {
+      // If server-side search was performed, use the results directly
+      setFilteredMovies(movies);
+    }
   }, [movies, filters]);
 
   const fetchMoviesByGenre = async (genre) => {
@@ -157,6 +164,18 @@ const BrowseMovies = () => {
 
   const handleFiltersChange = (newFilters) => {
     setFilters(newFilters);
+    
+    // If any filter is applied, use server-side search
+    if (newFilters.search || newFilters.genre || newFilters.year || newFilters.rating) {
+      fetchFilteredMovies(newFilters);
+    } else {
+      // If no filters, reload all movies
+      if (genre) {
+        fetchMoviesByGenre(genre);
+      } else {
+        fetchMovies();
+      }
+    }
   };
 
   const formatDuration = (minutes) => {
