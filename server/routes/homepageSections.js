@@ -142,9 +142,10 @@ router.delete('/:id', async (req, res) => {
 // Get all movies for selection dropdown
 router.get('/movies/available', async (req, res) => {
   try {
-    const movies = await Movie.find({ isReleased: true })
-      .select('_id title releaseYear portraitImage')
+    const movies = await Movie.find({})
+      .select('_id title releaseYear portraitImage genre director cast')
       .sort({ title: 1 });
+    console.log(`Found ${movies.length} movies in database`);
     res.json(movies);
   } catch (error) {
     console.error('Error fetching available movies:', error);

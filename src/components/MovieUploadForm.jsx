@@ -22,9 +22,7 @@ const MovieUploadForm = () => {
   });
 
   const [portraitImage, setPortraitImage] = useState(null);
-  const [landscapeImage, setLandscapeImage] = useState(null);
   const [portraitPreview, setPortraitPreview] = useState('');
-  const [landscapePreview, setLandscapePreview] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const [streamingServices, setStreamingServices] = useState([]);
@@ -85,31 +83,19 @@ const MovieUploadForm = () => {
     }));
   };
 
-  const handleImageChange = (e, type) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (type === 'portrait') {
-        setPortraitImage(file);
-        const reader = new FileReader();
-        reader.onload = () => setPortraitPreview(reader.result);
-        reader.readAsDataURL(file);
-      } else {
-        setLandscapeImage(file);
-        const reader = new FileReader();
-        reader.onload = () => setLandscapePreview(reader.result);
-        reader.readAsDataURL(file);
-      }
+      setPortraitImage(file);
+      const reader = new FileReader();
+      reader.onload = () => setPortraitPreview(reader.result);
+      reader.readAsDataURL(file);
     }
   };
 
-  const removeImage = (type) => {
-    if (type === 'portrait') {
-      setPortraitImage(null);
-      setPortraitPreview('');
-    } else {
-      setLandscapeImage(null);
-      setLandscapePreview('');
-    }
+  const removeImage = () => {
+    setPortraitImage(null);
+    setPortraitPreview('');
   };
 
   const addStreamingPlatform = () => {
@@ -161,12 +147,9 @@ const MovieUploadForm = () => {
         }
       });
 
-      // Add images if selected
+      // Add image if selected
       if (portraitImage) {
         formDataToSend.append('portraitImage', portraitImage);
-      }
-      if (landscapeImage) {
-        formDataToSend.append('landscapeImage', landscapeImage);
       }
 
       const response = await fetch(`${API_BASE_URL}/api/movies`, {
@@ -198,9 +181,7 @@ const MovieUploadForm = () => {
           streamingPlatforms: []
         });
         setPortraitImage(null);
-        setLandscapeImage(null);
         setPortraitPreview('');
-        setLandscapePreview('');
       } else {
         const error = await response.json();
         setMessage(`Error: ${error.message}`);
@@ -411,75 +392,39 @@ const MovieUploadForm = () => {
           </p>
         </div>
 
-        {/* Image Uploads */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Portrait Image */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-              Portrait Image (Poster)
-            </label>
-            <div className="space-y-3">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageChange(e, 'portrait')}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-blue-900/30 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50"
-              />
-              {portraitPreview && (
-                <div className="relative">
-                  <img
-                    src={portraitPreview}
-                    alt="Portrait preview"
-                    className="w-full h-48 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage('portrait')}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
-                  >
-                    ×
-                  </button>
-                </div>
-              )}
-            </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Recommended: 2:3 aspect ratio (e.g., 400x600px)
-            </p>
+        {/* Image Upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+            Movie Poster *
+          </label>
+          <div className="space-y-3">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-blue-900/30 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50"
+            />
+            {portraitPreview && (
+              <div className="relative max-w-xs">
+                <img
+                  src={portraitPreview}
+                  alt="Poster preview"
+                  className="w-full h-64 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
-
-          {/* Landscape Image */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-              Landscape Image (Banner)
-            </label>
-            <div className="space-y-3">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageChange(e, 'landscape')}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 dark:file:bg-blue-900/30 file:text-blue-700 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-900/50"
-              />
-              {landscapePreview && (
-                <div className="relative">
-                  <img
-                    src={landscapePreview}
-                    alt="Landscape preview"
-                    className="w-full h-32 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage('landscape')}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
-                  >
-                    ×
-                  </button>
-                </div>
-              )}
-            </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Recommended: 16:9 aspect ratio (e.g., 1200x675px)
-            </p>
-          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Recommended: 2:3 aspect ratio (e.g., 400x600px)
+          </p>
         </div>
 
         {/* Additional Details */}

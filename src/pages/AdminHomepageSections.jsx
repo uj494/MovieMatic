@@ -14,6 +14,7 @@ const AdminHomepageSections = () => {
     movieIds: [],
     order: 0
   });
+  const [movieSearchTerm, setMovieSearchTerm] = useState('');
 
   useEffect(() => {
     fetchSections();
@@ -127,9 +128,18 @@ const AdminHomepageSections = () => {
       movieIds: [],
       order: 0
     });
+    setMovieSearchTerm('');
     setEditingSection(null);
     setShowForm(false);
   };
+
+  // Filter movies based on search term
+  const filteredMovies = movies.filter(movie => 
+    movie.title.toLowerCase().includes(movieSearchTerm.toLowerCase()) ||
+    movie.genre?.some(g => g.toLowerCase().includes(movieSearchTerm.toLowerCase())) ||
+    movie.director?.toLowerCase().includes(movieSearchTerm.toLowerCase()) ||
+    movie.cast?.some(actor => actor.toLowerCase().includes(movieSearchTerm.toLowerCase()))
+  );
 
   const handleMovieToggle = (movieId) => {
     setFormData(prev => ({
@@ -137,6 +147,22 @@ const AdminHomepageSections = () => {
       movieIds: prev.movieIds.includes(movieId)
         ? prev.movieIds.filter(id => id !== movieId)
         : [...prev.movieIds, movieId]
+    }));
+  };
+
+  const handleSelectAll = () => {
+    const allFilteredMovieIds = filteredMovies.map(movie => movie._id);
+    setFormData(prev => ({
+      ...prev,
+      movieIds: [...new Set([...prev.movieIds, ...allFilteredMovieIds])]
+    }));
+  };
+
+  const handleClearAll = () => {
+    const filteredMovieIds = filteredMovies.map(movie => movie._id);
+    setFormData(prev => ({
+      ...prev,
+      movieIds: prev.movieIds.filter(id => !filteredMovieIds.includes(id))
     }));
   };
 
@@ -279,10 +305,79 @@ const AdminHomepageSections = () => {
                   <label className={`block text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                     Select Movies
                   </label>
-                  <div className={`mt-2 max-h-60 overflow-y-auto border rounded-md p-3 ${
+                  
+                  {/* Movie Search Input */}
+                  <div className="mt-2 mb-3">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={movieSearchTerm}
+                        onChange={(e) => setMovieSearchTerm(e.target.value)}
+                        className={`w-full px-3 py-2 pr-10 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${
+                          isDark 
+                            ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                            : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                        }`}
+                        placeholder="Search movies by title, genre, director, or cast..."
+                      />
+                      {movieSearchTerm && (
+                        <button
+                          type="button"
+                          onClick={() => setMovieSearchTerm('')}
+                          className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 ${
+                            isDark ? 'hover:text-gray-300' : 'hover:text-gray-800'
+                          }`}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    {movieSearchTerm && (
+                      <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Found {filteredMovies.length} movie{filteredMovies.length !== 1 ? 's' : ''} matching "{movieSearchTerm}"
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Select All / Clear All Buttons */}
+                  {filteredMovies.length > 0 && (
+                    <div className="flex gap-2 mb-3">
+                      <button
+                        type="button"
+                        onClick={handleSelectAll}
+                        className={`px-3 py-1 text-xs rounded border ${
+                          isDark 
+                            ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        Select All ({filteredMovies.length})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleClearAll}
+                        className={`px-3 py-1 text-xs rounded border ${
+                          isDark 
+                            ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                            : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  )}
+
+                  <div className={`max-h-60 overflow-y-auto border rounded-md p-3 ${
                     isDark ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'
                   }`}>
-                    {movies.map((movie) => (
+                    {filteredMovies.length === 0 ? (
+                      <p className={`text-center py-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                        {movieSearchTerm ? 'No movies found matching your search.' : 'No movies available.'}
+                      </p>
+                    ) : (
+                      filteredMovies.map((movie) => (
                       <label key={movie._id} className="flex items-center space-x-3 py-2">
                         <input
                           type="checkbox"
@@ -308,7 +403,8 @@ const AdminHomepageSections = () => {
                           </div>
                         </div>
                       </label>
-                    ))}
+                      ))
+                    )}
                   </div>
                   <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                     Selected: {formData.movieIds.length} movies

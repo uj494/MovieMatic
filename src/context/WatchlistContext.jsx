@@ -21,11 +21,16 @@ export const WatchlistProvider = ({ children }) => {
 
   // Fetch user's watchlist
   const fetchWatchlist = async (status = null, page = 1, limit = 20) => {
-    if (!isAuthenticated) return;
+    console.log('fetchWatchlist called:', { isAuthenticated, token: !!token });
+    if (!isAuthenticated) {
+      console.log('User not authenticated, skipping watchlist fetch');
+      return;
+    }
 
     try {
       setLoading(true);
       setError(null);
+      console.log('Fetching watchlist from:', `${API_BASE_URL}/api/watchlist?${new URLSearchParams({ page, limit })}`);
       
       const queryParams = new URLSearchParams();
       if (status) queryParams.append('status', status);
@@ -39,12 +44,29 @@ export const WatchlistProvider = ({ children }) => {
         }
       });
 
+      console.log('Watchlist response:', { status: response.status, ok: response.ok });
+
       if (response.ok) {
         const data = await response.json();
-        setWatchlist(data.watchlist);
+        console.log('Watchlist data received:', data);
+        setWatchlist(data.watchlist || []);
+        
+        // Calculate stats from watchlist data
+        const stats = {
+          total: (data.watchlist || []).length,
+          byStatus: (data.watchlist || []).reduce((acc, item) => {
+            acc[item.status] = (acc[item.status] || 0) + 1;
+            return acc;
+          }, {})
+        };
+        console.log('Calculated stats:', stats);
+        setWatchlistStats(stats);
+        
         return data;
       } else {
-        throw new Error('Failed to fetch watchlist');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Watchlist fetch failed:', { status: response.status, error: errorData });
+        throw new Error(errorData.message || 'Failed to fetch watchlist');
       }
     } catch (error) {
       console.error('Error fetching watchlist:', error);
@@ -74,12 +96,12 @@ export const WatchlistProvider = ({ children }) => {
 
       if (response.ok) {
         // Check if movie already exists in watchlist
-        const existingItem = watchlist.find(item => item.movie._id === movieId);
+        const existingItem = watchlist.find(item => item && item.movie && item.movie._id === movieId);
         
         if (existingItem) {
           // Update existing item
           setWatchlist(prev => prev.map(item => 
-            item.movie._id === movieId ? data.watchlistItem : item
+            item && item.movie && item.movie._id === movieId ? data.watchlistItem : item
           ));
           // Update stats - decrease old status, increase new status
           setWatchlistStats(prev => ({
@@ -121,7 +143,7 @@ export const WatchlistProvider = ({ children }) => {
 
     try {
       // Find the item to get its status before removing
-      const itemToRemove = watchlist.find(item => item.movie._id === movieId);
+      const itemToRemove = watchlist.find(item => item && item.movie && item.movie._id === movieId);
       const statusToRemove = itemToRemove?.status;
 
       const response = await fetch(`${API_BASE_URL}/api/watchlist/remove/${movieId}`, {
@@ -164,7 +186,7 @@ export const WatchlistProvider = ({ children }) => {
 
     try {
       // Find the current item to get its old status
-      const currentItem = watchlist.find(item => item.movie._id === movieId);
+      const currentItem = watchlist.find(item => item && item.movie && item.movie._id === movieId);
       const oldStatus = currentItem?.status;
 
       const response = await fetch(`${API_BASE_URL}/api/watchlist/update/${movieId}`, {
@@ -181,7 +203,7 @@ export const WatchlistProvider = ({ children }) => {
       if (response.ok) {
         // Update local state
         setWatchlist(prev => prev.map(item => 
-          item.movie._id === movieId ? data.watchlistItem : item
+          item && item.movie && item.movie._id === movieId ? data.watchlistItem : item
         ));
         
         // Update stats if status changed
@@ -254,7 +276,7 @@ export const WatchlistProvider = ({ children }) => {
 
   // Toggle movie in watchlist
   const toggleWatchlist = async (movieId, status = 'want_to_watch') => {
-    const isInWatchlist = watchlist.some(item => item.movie._id === movieId);
+    const isInWatchlist = watchlist.some(item => item && item.movie && item.movie._id === movieId);
     
     if (isInWatchlist) {
       return await removeFromWatchlist(movieId);

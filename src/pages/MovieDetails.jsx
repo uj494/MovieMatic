@@ -32,32 +32,62 @@ const MovieDetails = () => {
   // Function to convert video URLs to embed URLs
   const getEmbedUrl = (url) => {
     if (!url) return '';
-    
-    // YouTube URLs
-    if (url.includes('youtube.com/watch')) {
-      const videoId = url.split('v=')[1]?.split('&')[0];
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-    }
-    
-    // YouTube short URLs
-    if (url.includes('youtu.be/')) {
-      const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-    }
-    
-    // Vimeo URLs
-    if (url.includes('vimeo.com/')) {
-      const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
-      return videoId ? `https://player.vimeo.com/video/${videoId}` : url;
-    }
-    
-    // If it's already an embed URL, return as is
-    if (url.includes('embed') || url.includes('player.vimeo.com')) {
+
+    try {
+      // YouTube URLs - handle various formats
+      if (url.includes('youtube.com/watch')) {
+        const videoId = url.split('v=')[1]?.split('&')[0];
+        return videoId ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${window.location.origin}` : url;
+      }
+
+      // YouTube short URLs
+      if (url.includes('youtu.be/')) {
+        const videoId = url.split('youtu.be/')[1]?.split('?')[0];
+        return videoId ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${window.location.origin}` : url;
+      }
+
+      // YouTube embed URLs (already correct format)
+      if (url.includes('youtube.com/embed/')) {
+        const baseUrl = url.includes('?') ? url.split('?')[0] : url;
+        const existingParams = url.includes('?') ? url.split('?')[1] : '';
+        const params = new URLSearchParams(existingParams);
+        params.set('rel', '0');
+        params.set('modestbranding', '1');
+        params.set('playsinline', '1');
+        params.set('enablejsapi', '1');
+        params.set('origin', window.location.origin);
+        return `${baseUrl}?${params.toString()}`;
+      }
+
+      // Vimeo URLs
+      if (url.includes('vimeo.com/')) {
+        const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
+        return videoId ? `https://player.vimeo.com/video/${videoId}?title=0&byline=0&portrait=0&playsinline=1` : url;
+      }
+
+      // Vimeo player URLs (already correct format)
+      if (url.includes('player.vimeo.com/video/')) {
+        const baseUrl = url.includes('?') ? url.split('?')[0] : url;
+        const existingParams = url.includes('?') ? url.split('?')[1] : '';
+        const params = new URLSearchParams(existingParams);
+        params.set('title', '0');
+        params.set('byline', '0');
+        params.set('portrait', '0');
+        params.set('playsinline', '1');
+        return `${baseUrl}?${params.toString()}`;
+      }
+
+      // If it's already an embed URL, return as is
+      if (url.includes('embed') || url.includes('player.vimeo.com')) {
+        return url;
+      }
+
+      // Return original URL if no pattern matches
+      return url;
+    } catch (error) {
+      console.error('Error processing video URL:', error);
       return url;
     }
-    
-    // Return original URL if no pattern matches
-    return url;
   };
 
   useEffect(() => {
@@ -193,15 +223,37 @@ const MovieDetails = () => {
       {/* Header */}
       <Header />
 
-      {/* Hero Section with Landscape Image */}
+      {/* Hero Section with Trailer Preview */}
       <section className="relative">
-        {movie.landscapeImage && (
+        {movie.trailerUrl ? (
           <div className="w-full h-96 lg:h-[500px] relative overflow-hidden">
-            <img
-              src={`${API_BASE_URL}${movie.landscapeImage}`}
-              alt={movie.title}
-              className="w-full h-full object-cover"
-            />
+            <iframe
+              src={getEmbedUrl(movie.trailerUrl)}
+              title={`${movie.title} Trailer`}
+              className="w-full h-full rounded-lg"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              playsInline
+              webkit-playsinline="true"
+              moz-playsinline="true"
+              ms-playsinline="true"
+            ></iframe>
+          </div>
+        ) : (
+          /* Fallback: Show movie poster if no trailer */
+          <div className="w-full h-96 lg:h-[500px] relative overflow-hidden bg-gray-800 dark:bg-gray-900">
+            {movie.portraitImage && (
+              <div className="flex items-center justify-center h-full">
+                <img
+                  src={`${API_BASE_URL}${movie.portraitImage}`}
+                  alt={movie.title}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
             
             {/* Watchlist Button Overlay */}
@@ -272,10 +324,81 @@ const MovieDetails = () => {
             </div>
           </div>
         )}
+        
+        {/* Movie Details Section */}
+        <div className="bg-white dark:bg-gray-900 p-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4">
+              {movie.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-6 text-gray-700 dark:text-gray-300 text-lg">
+              {movie.rating > 0 && (
+                <div className="flex items-center">
+                  <svg className="h-6 w-6 text-yellow-400 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <span>{movie.rating}/10</span>
+                </div>
+              )}
+              <div className="flex items-center">
+                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>{movie.releaseYear}</span>
+              </div>
+              <div className="flex items-center">
+                <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{formatDuration(movie.duration)}</span>
+              </div>
+              {movie.isReleased ? (
+                <span className="px-3 py-1 bg-green-500 text-white text-sm rounded-full">
+                  Released
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-yellow-500 text-white text-sm rounded-full">
+                  Coming Soon
+                </span>
+              )}
+              
+              {/* Watchlist Button */}
+              {isAuthenticated && (
+                <button
+                  onClick={handleWatchlistToggle}
+                  disabled={isToggling || watchlistLoading}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 ${
+                    isInWatchlistState
+                      ? 'bg-red-500 hover:bg-red-600 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white'
+                  } ${(isToggling || watchlistLoading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+                  title={isInWatchlistState ? 'Remove from watchlist' : 'Add to watchlist'}
+                >
+                  {(isToggling || watchlistLoading) ? (
+                    <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  ) : isInWatchlistState ? (
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  )}
+                  <span className="text-sm font-medium">
+                    {isInWatchlistState ? 'In Watchlist' : 'Add to Watchlist'}
+                  </span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-8">
           {/* Detailed Information */}
           <div className="space-y-8">
@@ -287,22 +410,6 @@ const MovieDetails = () => {
               </p>
             </section>
 
-            {/* Trailer */}
-            {movie.trailerUrl && (
-              <section className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Trailer</h2>
-                <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    src={getEmbedUrl(movie.trailerUrl)}
-                    title={`${movie.title} Trailer`}
-                    className="absolute top-0 left-0 w-full h-full rounded-lg"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </section>
-            )}
 
             {/* Streaming Platforms */}
             {movie.streamingPlatforms && movie.streamingPlatforms.length > 0 && (
