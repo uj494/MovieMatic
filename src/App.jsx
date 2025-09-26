@@ -1,9 +1,9 @@
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { WatchlistProvider } from './context/WatchlistContext';
 import { ReviewProvider } from './context/ReviewContext';
-import ThemeToggle from './components/ThemeToggle';
 import UserHome from './pages/UserHome';
 import MovieDetails from './pages/MovieDetails';
 import BrowseMovies from './pages/BrowseMovies';
@@ -21,10 +21,25 @@ import ProtectedRoute from './components/ProtectedRoute';
 // Navigation component for admin pages
 const AdminNavigation = () => {
   const location = useLocation();
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
   
   const isActive = (path) => {
     return location.pathname === path;
   };
+
+  // Close admin menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isAdminMenuOpen && !event.target.closest('.admin-menu-container')) {
+        setIsAdminMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isAdminMenuOpen]);
 
   return (
     <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
@@ -46,53 +61,71 @@ const AdminNavigation = () => {
             >
               Dashboard
             </Link>
-            <Link
-              to="/admin/upload"
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/admin/upload')
-                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              Upload Movie
-            </Link>
-            <Link
-              to="/admin/movies"
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/admin/movies')
-                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              Manage Movies
-            </Link>
-            <Link
-              to="/admin/streaming-services"
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/admin/streaming-services')
-                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              Streaming Services
-            </Link>
-            <Link
-              to="/admin/homepage-sections"
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/admin/homepage-sections')
-                  ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
-              }`}
-            >
-              Homepage Sections
-            </Link>
-            <Link
-              to="/"
-              className="px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-            >
-              View Site
-            </Link>
-            <ThemeToggle />
+            
+            {/* Admin Dropdown Menu */}
+            <div className="relative admin-menu-container">
+              <button
+                onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <span>Admin</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {/* Admin Dropdown Menu */}
+              {isAdminMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                  <div className="py-1">
+                    <Link
+                      to="/admin/upload"
+                      onClick={() => setIsAdminMenuOpen(false)}
+                      className={`block px-4 py-2 text-sm transition-colors ${
+                        isActive('/admin/upload')
+                          ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      Upload Movie
+                    </Link>
+                    <Link
+                      to="/admin/movies"
+                      onClick={() => setIsAdminMenuOpen(false)}
+                      className={`block px-4 py-2 text-sm transition-colors ${
+                        isActive('/admin/movies')
+                          ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      Manage Movies
+                    </Link>
+                    <Link
+                      to="/admin/streaming-services"
+                      onClick={() => setIsAdminMenuOpen(false)}
+                      className={`block px-4 py-2 text-sm transition-colors ${
+                        isActive('/admin/streaming-services')
+                          ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      Streaming Services
+                    </Link>
+                    <Link
+                      to="/admin/homepage-sections"
+                      onClick={() => setIsAdminMenuOpen(false)}
+                      className={`block px-4 py-2 text-sm transition-colors ${
+                        isActive('/admin/homepage-sections')
+                          ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      Homepage Sections
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </nav>
         </div>
       </div>
